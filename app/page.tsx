@@ -1,6 +1,7 @@
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
 import AuthButtonServer from './auth-button-server';
+import NewTweet from './new-tweet';
 import { redirect } from 'next/navigation';
 
 export default async function Home() {
@@ -15,6 +16,7 @@ export default async function Home() {
     return (
         <>
             <AuthButtonServer />
+            <NewTweet />
             <pre>{JSON.stringify(tweets,null,2)}</pre>
         </>
     )
