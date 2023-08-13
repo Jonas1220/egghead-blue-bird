@@ -14,7 +14,7 @@ export default async function Home() {
         redirect('/login')
     }
     
-    const { data } = await supabase.from("tweets").select('*, author: profiles(*), likes(user_id)');
+    const { data } = await supabase.from("tweets").select('*, author: profiles(*), likes(user_id)').order('created_at', {ascending:false});
 
     // if data is available map through if not empty array
     const tweets = data?.map(tweet => ({
@@ -24,10 +24,14 @@ export default async function Home() {
         likes: tweet.likes.length
     })) ?? []
     return (
-        <>
-            <AuthButtonServer />
-            <NewTweet />
+        <div className='w-full max-w-xl mx-auto'>
+            <div className='flex justify-between px-4 py-6 border border-t-0 border-gray-800'>
+                <h1 className='text-xl font-bold'>Home</h1>
+
+                <AuthButtonServer />
+            </div>
+            <NewTweet user={session.user}/>
             <Tweets tweets={tweets} />
-        </>
+        </div>
     )
 }
