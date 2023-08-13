@@ -13,8 +13,9 @@ export default async function Home() {
         redirect('/login')
     }
     
-    const { data } = await supabase.from("tweets").select('*, profiles(*), likes(*)');
+    const { data } = await supabase.from("tweets").select('*, author: profiles(*), likes(user_id)');
 
+    // if data is available map through if not empty array
     const tweets = data?.map(tweet => ({
         ...tweet,
         user_has_liked: tweet.likes.find(like => like.user_id === session.user.id),
@@ -24,18 +25,14 @@ export default async function Home() {
         <>
             <AuthButtonServer />
             <NewTweet />
+            {/* map through tweets array */}
             {tweets?.map((tweet) => (
-                <div key={tweet.id}>
-                    <p>
-                        {tweet?.profiles?.name} @{tweet?.profiles?.username}
-                    </p>
-                    <p>
-                        {tweet.title}
-                    </p>
+                <div key={ tweet.id }>
+                    <p>{ tweet?.author?.name } @{ tweet?.author?.username }</p>
+                    <p>{ tweet.title }</p>
                     <Likes tweet={tweet} />
                 </div>
             ))}
-            {/* <pre>{JSON.stringify(tweets,null,2)}</pre> */}
         </>
     )
 }
