@@ -6,7 +6,7 @@ import { redirect } from 'next/navigation';
 import Likes from './likes';
 
 export default async function Home() {
-    const supabase = createServerComponentClient({ cookies })
+    const supabase = createServerComponentClient<Database>({ cookies }) // get the database schema from globals
     const { data: { session }} = await supabase.auth.getSession();
 
     if (!session) {
@@ -18,7 +18,8 @@ export default async function Home() {
     // if data is available map through if not empty array
     const tweets = data?.map(tweet => ({
         ...tweet,
-        user_has_liked: tweet.likes.find(like => like.user_id === session.user.id),
+        author: Array.isArray(tweet.author) ? tweet.author[0] : tweet.author,
+        user_has_liked: !!tweet.likes.find(like => like.user_id === session.user.id),
         likes: tweet.likes.length
     })) ?? []
     return (
@@ -26,7 +27,7 @@ export default async function Home() {
             <AuthButtonServer />
             <NewTweet />
             {/* map through tweets array */}
-            {tweets?.map((tweet) => (
+            {tweets.map((tweet) => (
                 <div key={ tweet.id }>
                     <p>{ tweet?.author?.name } @{ tweet?.author?.username }</p>
                     <p>{ tweet.title }</p>

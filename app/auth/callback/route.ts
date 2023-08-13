@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
 
     // check if auth is successful and set cookie
     if (code) {
-        const supabase = createRouteHandlerClient({ cookies });
+        const supabase = createRouteHandlerClient<Database>({ cookies });
         await supabase.auth.exchangeCodeForSession(code);
     }
 
